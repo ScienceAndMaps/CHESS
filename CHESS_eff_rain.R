@@ -4,6 +4,7 @@
 require(ncdf4)
 require(raster)
 
+data_folder <- "CHESS" # data folder (from script location)
 years <- 2006:2015 # choose your range
 
 wd <- paste0(dirname(rstudioapi::getSourceEditorContext()$path),"/") # if not running in RStudio, set wd to directory of this script, e.g. wd <- 'C:/Dir/'
@@ -12,14 +13,14 @@ if (!dir.exists(paste0(wd,"Outputs"))) {dir.create(paste0(wd,"Outputs"))}
 
 for (year in years) {
   
-  pet <- list.files(paste0(wd,"GIS_Data/CHESS/"),pattern = paste0("peti_wwg_",year))
-  prec <- list.files(paste0(wd,"GIS_Data/CHESS/"),pattern = paste0("precip_",year))
+  pet <- list.files(paste0(wd,data_folder),pattern = paste0("peti_wwg_",year))
+  prec <- list.files(paste0(wd,data_folder),pattern = paste0("precip_",year))
   
   for (i in 1:length(prec)) {
     
-    prec_month <- stack(paste0(wd,"GIS_Data/CHESS/",prec[i]))
+    prec_month <- stack(paste0(wd,data_folder,"/",prec[i]))
     prec_month <- prec_month*86400 # convert from kg/m2/s to mm/day
-    pet_month <- stack(paste0(wd,"GIS_Data/CHESS/",pet[i]))
+    pet_month <- stack(paste0(wd,data_folder,"/",pet[i]))
     
     for (j in 1:nlayers(prec_month)) {
       
@@ -32,6 +33,6 @@ for (year in years) {
     
   }
   
-writeRaster(daily_sums,paste0(wd,"Outputs/","CHESS_eff_rain_",year,".tif"))
-  
+writeRaster(daily_sums,paste0(wd,"Outputs/","CHESS_eff_precip_daily_method_",year,".tif"))
+
 }
